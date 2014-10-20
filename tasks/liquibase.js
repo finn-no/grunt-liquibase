@@ -59,7 +59,7 @@ module.exports = function(grunt) {
           options.password = parts[1];
 
           parsedUrl.auth = null;
-          options.url = url.format(parsedUrl);
+          options.url = 'jdbc:' + url.format(parsedUrl);
       }
 
       if(options.username === undefined) {

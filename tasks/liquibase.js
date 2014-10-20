@@ -11,6 +11,7 @@
 var path = require('path');
 var chalk = require('chalk');
 var exec = require('child_process').exec;
+var parseUrl = require('url').parse;
 
 module.exports = function(grunt) {
 
@@ -46,14 +47,23 @@ module.exports = function(grunt) {
     grunt.verbose.writeln("Will excecute:" + cmd);
 
     if (supportedCommands.indexOf(cmd) >= 0) {
+      if(options.url === undefined) {
+        throw new Error('`url` must be specified');
+      }
+
+      var parsedUrl = parseUrl(options.url.replace(/^jdbc:/, ''));
+
+      if (parsedUrl.auth != null && parsedUrl.auth !== "") {
+          var parts = parsedUrl.auth.split(":");
+          options.username = parts[0];
+          options.password = parts[1];
+      }
+
       if(options.username === undefined) {
         throw new Error('`username` must be specified');
       }
       if(options.password === undefined) {
         throw new Error('`password` must be specified');
-      }
-      if(options.url === undefined) {
-        throw new Error('`url` must be specified');
       }
       // this is the command we need to run
       for(optionName in options) {

@@ -11,7 +11,7 @@
 var path = require('path');
 var chalk = require('chalk');
 var exec = require('child_process').exec;
-var parseUrl = require('url').parse;
+var url = require('url');
 
 module.exports = function(grunt) {
 
@@ -51,12 +51,15 @@ module.exports = function(grunt) {
         throw new Error('`url` must be specified');
       }
 
-      var parsedUrl = parseUrl(options.url.replace(/^jdbc:/, ''));
+      var parsedUrl = url.parse(options.url.replace(/^jdbc:/, ''));
 
       if (parsedUrl.auth != null && parsedUrl.auth !== "") {
           var parts = parsedUrl.auth.split(":");
           options.username = parts[0];
           options.password = parts[1];
+
+          parsedUrl.auth = null;
+          options.url = url.format(parsedUrl);
       }
 
       if(options.username === undefined) {
